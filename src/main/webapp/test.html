@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <script src="lib/jquery/jquery-1.11.1.js"></script>
+    <title></title>
+</head>
+<body>
+    <p>哈哈哈</p>
+    <form id="myform" action="a" method="post" enctype='text/json' >
+        First name:<br>
+        <input id="input1" type="text" name="firstname" value="">
+        <br>
+        Last name:<br>
+        <input id="input2" type="text" name="lastname" value="">
+        <br><br>
+        <input id="bt1" type="button" value="Submit">
+    </form>
+    <input id="bt" type="button" value="submit2"/>
+    <input id="bt3" type="button" value="submit3"/>
+    <script>
+        //jquery function for convert value in a form into json object
+        $.fn.serializeObject = function()
+        {
+            var o = {};
+            var a = this.serializeArray();
+            $.each(a, function() {
+                if (o[this.name] !== undefined) {
+                    if (!o[this.name].push) {
+                        o[this.name] = [o[this.name]];
+                    }
+                    o[this.name].push(this.value || '');
+                } else {
+                    o[this.name] = this.value || '';
+                }
+            });
+            return o;
+        };
+
+        document.getElementById("bt1").addEventListener("click", function(){
+            var jsonobj = $("#myform").serializeObject();
+            // stringfy the jsonObj in sending with .ajax
+            console.log("The sending message is: "+JSON.stringify(jsonobj));
+            $.ajax({
+                url: 'http://'+window.location.host+'/a',
+                type: 'post',
+                dataType: 'text',
+                contentType: 'application/json',
+                data: JSON.stringify(jsonobj),  //!!! important to stringfy json
+                success: function(data) {
+                    console.log(data);
+                },
+                error : function(e){
+                    console.log(e);
+                }
+            });
+        });
+
+
+        document.getElementById("bt").addEventListener("click", function(){
+//           alert(document.getElementById("input1").value);
+//            alert(window.location.host);
+
+            var jsonobj = {firstname: document.getElementById("input1").value, lastname: document.getElementById("input2").value};
+            console.log(JSON.stringify(jsonobj));
+            $.ajax({
+                url: 'http://'+window.location.host+'/a',
+                type: 'post',
+                dataType: 'text',
+                contentType: 'application/json',
+                data: JSON.stringify(jsonobj),
+                success: function(data) {
+                    console.log(data);
+                },
+                error : function(e){
+                    console.log(e);
+                }
+            });
+        });
+
+        document.getElementById("bt3").addEventListener("click", function(){
+//           alert(document.getElementById("input1").value);
+//            alert(window.location.host);
+
+            $.ajax({
+                url: 'http://'+window.location.host+'/t3',
+                type: 'get',
+                dataType: 'text',
+//                contentType: 'application/json',
+                data: {firstname: document.getElementById("input1").value, lastname: document.getElementById("input2").value},
+                success: function(data) {
+                    console.log(data);
+                },
+                error : function(e){
+                    console.log(e);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
